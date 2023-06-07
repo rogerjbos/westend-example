@@ -23,6 +23,10 @@ fn main() {
                 let block = from_value::<Block>(&value).unwrap();
 
                 let s = Series::new("block", vec![block.relay_chain]); 
+                // polars currently chokes on arrays
+                // workaround would be to index into them but meh
+                // the bottom line won't work
+                // let s = Series::new("extrinsics", vec![block.extrinsics]); 
 
                 df.with_column(s).unwrap();
                 
@@ -32,6 +36,8 @@ fn main() {
 
         // Print the DataFrame
         println!("{:?}", df);
+
+        
         
         break;
     }
