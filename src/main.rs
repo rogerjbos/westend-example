@@ -1,7 +1,7 @@
 use std::io::Read;
 use apache_avro::types::Record;
 use apache_avro::AvroSchema;
-use apache_avro::Schema;
+use apache_avro::from_value;
 use apache_avro::Reader;
 use std::fs::File;
 use std::path::Path;
@@ -15,9 +15,15 @@ fn main() {
     let reader = Reader::with_schema(&schema_trait, file).unwrap();
     
     for record in reader {
-        let record = record.unwrap();
+        match record {
+            Ok(value) => {
+                let block = from_value::<Block>(&value);
+                println!("{:?}", block);
+            }
+            Err(e) => panic!("{:?}", e),
+        }
+
         
-        println!("{:?}", record);
         break;
     }
 }
