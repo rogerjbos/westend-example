@@ -13,10 +13,10 @@ pub struct Signer {
 
 #[derive(Deserialize, Debug, Serialize, apache_avro::AvroSchema)]
 pub struct Signature {
-    signature: String,
+    pub signature: String,
 
     #[serde(deserialize_with = "string_or_struct")]
-    signer: Signer,
+    pub signer: Signer,
 }
 
 #[derive(Deserialize, Debug, Serialize, apache_avro::AvroSchema)]
@@ -27,7 +27,7 @@ pub struct Event {
 
 #[derive(Deserialize, Debug, Serialize, apache_avro::AvroSchema)]
 pub struct Era {
-    immortalEra: Option<String>,
+    pub immortalEra: Option<String>,
 }
 
 #[derive(Deserialize, Debug, Serialize, apache_avro::AvroSchema)]
@@ -39,16 +39,16 @@ pub struct Method {
 #[derive(Deserialize, Debug, Serialize, apache_avro::AvroSchema)]
 pub struct Extrinsic {
     pub method: Method,
-    signature: Option<Signature>,
-    nonce: Option<String>,
+    pub signature: Option<Signature>,
+    pub nonce: Option<String>,
     pub args: String,
-    tip: Option<String>,
-    hash: String,
-    info: String,
-    era: Era,
+    pub tip: Option<String>,
+    pub hash: String,
+    pub info: String,
+    pub era: Era,
     pub events: Vec<Event>,
-    success: bool,
-    paysFee: bool,
+    pub success: bool,
+    pub paysFee: bool,
 }
 
 #[derive(Deserialize, Debug, Serialize, apache_avro::AvroSchema)]
@@ -60,17 +60,17 @@ pub struct Block {
     // #[serde(skip_deserializing)]
     pub timestamp: i64,
 
-    number: String,
-    hash: String,
-    parentHash: String,
-    stateRoot: String,
-    extrinsicsRoot: String,
-    authorId: Option<String>,
-    finalized: bool,
+    pub number: String,
+    pub hash: String,
+    pub parentHash: String,
+    pub stateRoot: String,
+    pub extrinsicsRoot: String,
+    pub authorId: Option<String>,
+    pub finalized: bool,
     pub extrinsics: Vec<Extrinsic>,
-    onInitialize: SystemEvent,
-    onFinalize: SystemEvent,
-    logs: Vec<Log>,
+    pub onInitialize: SystemEvent,
+    pub onFinalize: SystemEvent,
+    pub logs: Vec<Log>,
 }
 
 #[derive(Deserialize, Debug, Serialize, apache_avro::AvroSchema)]
