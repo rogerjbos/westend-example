@@ -1,57 +1,36 @@
-#![cfg_attr(debug_assertions, allow(dead_code, unused_imports))]
-#[macro_use] extern crate polars_core;
-use polars_core::prelude::*;
-use polars_lazy::prelude::*;
-use polars::prelude::*;
-use reqwest::blocking::Client;
-
-use connectorx::prelude::*;
-use std::convert::TryFrom;
-use chrono::prelude::*;
-use std::error::Error;
-use polars::{df, prelude::*};
-use std::env;
+#![allow(dead_code)] 
+#![allow(unused_imports)] 
+#![allow(unused_variables)] 
+use apache_avro::AvroSchema;
+use clap::Parser;
+use glob::glob;
+use log::debug;
+use std::fs;
 use std::fs::File;
-use polars_io::avro::AvroReader;
-// use polars_io::avro::AvroWriter;
-use polars_io::SerReader;
-// use polars_io::SerWriter;
-
-// use apache_avro::Writer;
+use apache_avro::Writer;
 use apache_avro::Reader;
-// use lazy_static::lazy_static;
-use serde::Deserialize;
-use serde::Serialize;
+use apache_avro::from_value;
 
-// #[derive(Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Debug, AvroSchema)]
-// pub struct X {
-//     x: bool,
-// }
-
-// lazy_static! {
-//     static ref SCHEMA: Schema = X::get_schema();
-// }
-
-// pub fn decode_avro(bytes: &[u8]) -> X {
-//     let value = Reader::with_schema(&SCHEMA, bytes)
-//         .expect("Failed to create reader from schema")
-//         // Get the first value from the Reader via the Iterator trait method
-//         .next()
-//         // Unwrap the Option next returns since we're expecting at least one value
-//         .expect("No values in input")
-//         // Unwrap the Result that the Reader provides since we expect the input to be a valid value
-//         .expect("Failed to parse value");
-
-//     from_value(&value)
-//         // Unwrap the result from deserializing with serde
-//         .expect("serde Deserialize failed")
-// }
-
+#[derive(Debug)]
+pub struct Block {
+    relay_chain: String,
+    chain: String,
+    timestamp: String,
+    number: String,
+    hash: String,
+    parent_hash: String,
+    state_root: String,
+    extrinsics_root: String,
+    author_id: String,
+    finalized: String,
+    extrincis: String,
+    on_initialize: String,
+    on_finalize: String,
+    log: String,
+}
 
 fn main() {
 
-    // let mut file = File::create("output.avro").expect("couldn't create file");
-    // AvroWriter::new(&mut file).finish(&mut df.unwrap()).expect("couldn't write file");
     let fname = "westend_westend_20230411_westend_blocks.avro";
     let file = File::open(fname).expect("file not found");
     println!("file found! {:?}", file);
@@ -60,12 +39,18 @@ fn main() {
     // let df_avro = AvroReader::new(file).finish().expect("file not read");
    
     // ATTEMPT #2 USING APACHE_AVRO - this works
-    let reader = Reader::new(file).unwrap();
+    let mut reader = Reader::new(file).unwrap();
+
+    let record = reader.next().unwrap();
+    // println!("Record: {:?}", record.unwrap());
+    let test = from_value::<Block>(&record.unwrap());
+    
     for (i, value) in reader.enumerate() {
-        println!("{i}: {:?}", value.unwrap());
-        if i > 2{
+        let v = value.unwrap();
+        println!("\n##### {i} :{:?}", v);
+        // println!("{:#?}", from_value::<Block>(&value.unwrap()));
+        if i > 0{
             break;
         }
     }
-
 }
